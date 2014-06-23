@@ -21,7 +21,7 @@ knit        : slidify::knit2slides
     - Wins above replacement, wRC+, xFIP, . . .
 - Advanced Statistics will revolutionize your fantasy baseball league too.
 - Don't get left in the dust!
-- Check out the R Fantasy Baseball Calculator: [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/)
+- See how it works . . .
 
 ---
 
@@ -55,7 +55,7 @@ print(xtable(records), type = 'html')
 ```
 
 <!-- html table generated in R 3.0.2 by xtable 1.7-3 package -->
-<!-- Mon Jun 23 15:26:57 2014 -->
+<!-- Mon Jun 23 15:45:49 2014 -->
 <TABLE border=1>
 <TR> <TH>  </TH> <TH> wins </TH> <TH> losses </TH> <TH> ties </TH> <TH> win_percentage </TH>  </TR>
   <TR> <TD align="right"> Actual record </TD> <TD align="right">  40 </TD> <TD align="right">  38 </TD> <TD align="right">  10 </TD> <TD align="right"> 0.51 </TD> </TR>
@@ -64,4 +64,4 @@ print(xtable(records), type = 'html')
 
 - Find out that Jose Bautista has been pivotal in 4.5 wins thus far this season.
 - There is so much more!
-- Visit [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/) to keep exploring.
+- Visit [https://jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](https://jhsdatascience.shinyapps.io/fantasy-baseball-player-values/) to keep exploring.

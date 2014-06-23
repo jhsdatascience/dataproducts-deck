@@ -24,7 +24,7 @@ source('lib/load.R'); source('lib/matchups.R')
     - Wins above replacement, wRC+, xFIP, . . .
 - Advanced Statistics will revolutionize your fantasy baseball league too.
 - Don't get left in the dust!
-- Check out the R Fantasy Baseball Calculator: [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/)
+- See how it works . . .
 
 ---
 
@@ -127,4 +127,4 @@ print(xtable(records), type = 'html')
 
 - Find out that Jose Bautista has been pivotal in `r fvalue` wins thus far this season.
 - There is so much more!
-- Visit [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/) to keep exploring.
+- Visit [https://jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](https://jhsdatascience.shinyapps.io/fantasy-baseball-player-values/) to keep exploring.
