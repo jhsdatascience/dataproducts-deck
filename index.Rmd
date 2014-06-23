@@ -1,0 +1,130 @@
+---
+title       : The R Fantasy Baseball Calculator
+subtitle    : Quantify your players' production sabermetrically
+author      : jhsdatascience
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+
+## The Vision
+
+```{r, echo = F, results = 'hide'}
+library(plyr); library(ggplot2); library(RColorBrewer); library(xtable)
+source('lib/load.R'); source('lib/matchups.R')
+```
+
+
+- Advanced Statistics have revolutionized how baseball is played and managed.
+    - Wins above replacement, wRC+, xFIP, . . .
+- Advanced Statistics will revolutionize your fantasy baseball league too.
+- Don't get left in the dust!
+- Check out the R Fantasy Baseball Calculator: [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/)
+
+---
+
+## How it works
+
+```{r, echo = F}
+weekly_totals <- read.csv('weekly_totals_all.csv')
+opponents_totals <- read.csv('opponent_totals_all.csv')
+replaced_totals <- read.csv('replaced_totals.csv')
+replacement_player <- read.csv('replacement_player.csv')
+batter_fields <<- load_batter_fields('data/batter_fields.csv')
+teams <<- load_teams('data/teams.csv')
+plot_matchups <- function(stat, stat_long, team_weekly_totals, team_opponent_totals, team,
+                          replaced_totals = NULL,
+                          player_to_replace = NULL,
+                          roster = NULL) {
+    team_name <- get_team_by_id(team)
+    home <- rep('Home', nrow(team_weekly_totals))
+    away <- rep('Away', nrow(team_opponent_totals))
+    plot_title <- paste0(stat_long, ' per week for ', team_name)
+    if (is.null(replaced_totals)) {
+        df <- ldply(list(Team = team_weekly_totals,
+                         Opponent = team_opponent_totals))
+        home_away <- c(home, away)
+        df <- cbind(df, home_away)
+        df$.id <- factor(df$.id, levels=c('Team', 'Opponent'), labels = c('Team', 'Opponent'))
+    } else {
+        active_during_week <- sapply(split(roster, roster$week), function(x) any(x$player == player_to_replace))
+        replaced_totals[!active_during_week, ] <- ddply(replaced_totals[!active_during_week,],
+                                                        .(week),
+                                                        function(x) rep(NA, ncol(x) - 1 ))
+        df <- ldply(list(Team = team_weekly_totals,
+                         'Team with replacement level player' = replaced_totals,
+                         Opponent = team_opponent_totals))
+        home_away <- c(home, home, away)
+        df <- cbind(df, home_away)
+        df$.id <- factor(df$.id, levels=c('Team', 'Team with replacement level player', 'Opponent'),
+                         labels = c('Team', 'Team with replacement level player', 'Opponent'))
+        plot_title <- paste(plot_title, 'sans', player_to_replace)
+    }
+    group_colors <- brewer.pal(3, 'Paired')
+    names(group_colors) <- c('Team', 'Team with replacement level player', 'Opponent')
+    ggplot(df, aes_string('week', stat, color = '.id', group = '.id', linetype = 'home_away')) +
+        geom_point() +
+        geom_line() +
+        scale_linetype_manual(values = c('dashed', 'solid')) +
+        scale_color_manual(values = group_colors) +
+#                              breaks = legend_breaks) +
+        guides(linetype = FALSE) +
+#        scale_color_brewer(type = 'qual') +
+        theme_bw() +
+        theme(legend.position="bottom",
+              legend.title=element_blank()) +
+        #guide_legend(nrow = 2, ncol = 2) +
+        labs(x = 'Week',
+             y = stat_long,
+             title = plot_title,
+             color = 'Team')
+}
+```
+
+Visualize how your team has performed in each category for the season so far:
+
+```{r, echo = F} 
+team = teams[teams$team == 'The Miguel Cabreras', 'id']
+plot_matchups('AVG',
+              'Batting Average',
+              weekly_totals[weekly_totals$team == team,],
+              opponents_totals[opponents_totals$team == team,],
+              team)
+```
+
+---
+
+## How it works
+
+Figure out how pivotal a player has been for you in each statistical category:
+
+```{r, echo = F}
+batters <- load_batters('batters.csv')
+plot_matchups('AVG',
+              'Batting Average',
+              weekly_totals[weekly_totals$team == team,],
+              opponents_totals[opponents_totals$team == team,],
+              team,
+              replaced_totals, 'Jose Bautista', batters[[team]])
+```
+
+---
+
+## How it works
+
+Calculate how many wins a player has been worth this season:
+
+```{r, results='asis'}
+records <- rbind(calculate_record(weekly_totals[weekly_totals$team == team,], opponents_totals[opponents_totals$team == team,]), calculate_record(replaced_totals, opponents_totals[opponents_totals$team == team, ])); rownames(records) <- c('Actual record', 'Record without Jose Bautista')
+fvalue <- records[1,1] - records[2,1] + .5 * (records[1,3] - records[2,3])
+print(xtable(records), type = 'html')
+```
+
+- Find out that Jose Bautista has been pivotal in `r fvalue` wins thus far this season.
+- There is so much more!
+- Visit [jhsdatascience.shinyapps.io/fantasy-baseball-player-values/](jhsdatascience.shinyapps.io/fantasy-baseball-player-values/) to keep exploring.

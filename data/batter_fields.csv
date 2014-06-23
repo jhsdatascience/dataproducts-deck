@@ -1,0 +1,10 @@
+stat,raw,desc,comp
+R,R,Runs,1
+X2B,X2B,Doubles,1
+HRS,HRS,Home Runs,1
+RBI,RBI,Runs Batted In,1
+SB,SB,Stolen Bases,1
+AVG,H,Batting Average,1
+AVG,AB,Batting Average,1
+BB,BB,Walks,1
+SLAM,SLAM,Grand Slams,1
